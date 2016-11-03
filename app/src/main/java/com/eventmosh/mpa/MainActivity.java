@@ -1,9 +1,13 @@
 package com.eventmosh.mpa;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
+import com.eventmosh.mpa.view.MyMarkerView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -15,11 +19,13 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private LineChart mChart;
 
+    private Button btnRefresh;
+    private Button btnPieChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +34,21 @@ public class MainActivity extends AppCompatActivity {
 
         mChart = (LineChart) findViewById(R.id.chart);
 
+        btnRefresh= (Button) findViewById(R.id.refresh);
+        btnPieChart= (Button) findViewById(R.id.btn_pie_chart);
+        btnRefresh.setOnClickListener(this);
+        btnPieChart.setOnClickListener(this);
+
         initLineChart(mChart);
-        LineData mLineData = getLineData(7, 100);
+        LineData mLineData = getLineData(7, 35);
         showChart(mChart, mLineData, Color.rgb(114, 188, 223));
+
+
+
+        MyMarkerView mv=new MyMarkerView(this,R.layout.marker_view,( ArrayList<ILineDataSet>)mLineData.getDataSets());
+        mChart.setMarkerView(mv);
+
+
     }
 
 
@@ -49,8 +67,10 @@ public class MainActivity extends AppCompatActivity {
         // X轴坐标线的颜色
         xAxis.setAxisLineColor(Color.WHITE);
         xAxis.setTextColor(Color.WHITE);
-
-
+        xAxis.setTextSize(8f);
+        xAxis.setAxisMinValue(0.0f);//设置X轴的最小值
+        yAxis.setAxisMinValue(0.0f);//设置Y轴的最小值
+       // yAxis.setAxisMaxValue(30f);//设置Y轴的最小值
         //X轴上的刻度竖线的颜色
         xAxis.setGridColor(Color.WHITE);
         yAxis.setEnabled(false);
@@ -60,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         mChart.getAxisLeft().setDrawGridLines(false);
 
 
+
+        mChart.setDescription("");// 数据描述
 
     }
 
@@ -71,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         lineChart.setBorderColor(Color.WHITE);
         lineChart.setBorderWidth(0.35f);
         // no description text
-        lineChart.setDescription("");// 数据描述
+
         // 如果没有数据的时候，会显示这个，类似listview的emtpyview
         lineChart.setNoDataTextDescription("You need to provide data for the chart.");
 
@@ -89,10 +111,14 @@ public class MainActivity extends AppCompatActivity {
         // if disabled, scaling can be done on x- and y-axis separately
         lineChart.setPinchZoom(false);//
 
-        lineChart.setBackgroundColor(color);// 设置背景
+        lineChart.setHighlightPerTapEnabled(true);
+
+       // lineChart.setBackgroundColor(color);// 设置背景
+        lineChart.setBackgroundColor(Color.TRANSPARENT);// 设置背景
 
         // add data
         lineChart.setData(lineData); // 设置数据
+
 
         // get the legend (only possible after setting data)
         Legend mLegend = lineChart.getLegend(); // 设置比例图标示，就是那个一组y的value的
@@ -119,23 +145,27 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> xValues = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             // x轴显示的数据，这里默认使用数字下标显示
-            xValues.add(""+i);
+            if(i==0){
+                xValues.add("9月11日");
+            }else if(i==6){
+                xValues.add("9月15日");
+            }else {
+                xValues.add("");
+            }
         }
 
         // y轴的数据
         ArrayList<Entry> yValues = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            float value = (float) (Math.random() * range)*2 + 3;
+            float value = (float) (Math.random() * range) +6;
             yValues.add(new Entry(value, i));
         }
 
         // create a dataset and give it a type
         // y轴的数据集合
-        LineDataSet lineDataSet = new LineDataSet(yValues, null /*显示在比例图上*/);
+        LineDataSet lineDataSet = new LineDataSet(yValues ,null /*显示在比例图上*/);
         // lineDataSet.setFillAlpha(110);
-        //lineDataSet.setFillColor(Color.RED);
-
-
+        //lineDataSet.setFillColor(Color.TRANSPARENT);
 
         //用y轴的集合来设置参数
         lineDataSet.setLineWidth(1.75f); // 线宽
@@ -148,13 +178,22 @@ public class MainActivity extends AppCompatActivity {
         lineDataSet.setDrawCubic(true); //是否弧线
         lineDataSet.setCircleColorHole(Color.RED);
 
+
+        lineDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+
+
+      // lineDataSet.setValueTextColor(Color.TRANSPARENT); //设置提示文字为透明
+
+       // lineDataSet.setLabel("lll");
+
+
         ArrayList<ILineDataSet> lineDataSets = new ArrayList<>();
         lineDataSets.add(lineDataSet); // add the datasets
 
 
         ArrayList<Entry> yValues2 = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            float value = (float) i * 50;
+            float value = (float) 30-i*2;
             yValues2.add(new Entry(value, i));
         }
 
@@ -171,8 +210,10 @@ public class MainActivity extends AppCompatActivity {
         lineDataSet2.setDrawCubic(true); //是否弧线
         lineDataSet2.setCircleColorHole(Color.BLUE);
         lineDataSet2.setDrawStepped(true);
-       // lineDataSet2.setValueTextColor(Color.TRANSPARENT); //设置提示文字为透明
 
+        lineDataSet2.setAxisDependency(YAxis.AxisDependency.RIGHT);
+
+       // lineDataSet2.setValueTextColor(Color.TRANSPARENT); //设置提示文字为透明
         lineDataSets.add(lineDataSet2);
 
         // create a data object with the datasets
@@ -182,5 +223,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()){
+            case R.id.btn_pie_chart:
+                 startActivity(new Intent(this, PieChartActivity.class));
+                break;
+            case R.id.refresh:
+                LineData mLineData = getLineData(7, 35);
+                showChart(mChart, mLineData, Color.rgb(114, 188, 223));
+                MyMarkerView mv=new MyMarkerView(this,R.layout.marker_view,( ArrayList<ILineDataSet>)mLineData.getDataSets());
+                mChart.setMarkerView(mv);
+
+                break;
+        }
+    }
 }
 
