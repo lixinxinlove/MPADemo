@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -48,6 +49,10 @@ public class PieChartActivity extends AppCompatActivity {
         pieChart.setDragDecelerationFrictionCoef(0.90f);
         pieChart.setHoleRadius(50f);
         pieChart.setTransparentCircleRadius(61f);
+
+        Legend mLegend = pieChart.getLegend();  //设置比例图
+        mLegend.setEnabled(false);
+      //  mLegend.setPosition(Legend.LegendPosition.RIGHT_OF_CHART_INSIDE);  //最右边显示
 
     }
 

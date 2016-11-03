@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // get the legend (only possible after setting data)
         Legend mLegend = lineChart.getLegend(); // 设置比例图标示，就是那个一组y的value的
-
+        mLegend.setEnabled(false);
         // modify the legend ...
         // mLegend.setPosition(LegendPosition.LEFT_OF_CHART);
         mLegend.setForm(Legend.LegendForm.CIRCLE);// 样式
@@ -131,6 +131,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //      mLegend.setTypeface(mTf);// 字体
 
         lineChart.animateX(500); // 立即执行的动画,x轴
+
+
+
     }
 
     /**
